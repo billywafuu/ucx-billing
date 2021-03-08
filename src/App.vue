@@ -26,7 +26,7 @@ export default {
     this.$http.interceptors.response.use(function (response) {
       return response;
     }, function (error) {
-      if(error.response.status == 401) {
+      if (error.response.status == 401) {
         system.$store.commit('logout');
         system.$router.push('/unauthorized');
       }

@@ -21,31 +21,59 @@
             />
           </q-card-section>
         </q-card>
+        <q-card>
+         <div id="ctx">
+
+         </div>
+        </q-card>
         <q-card flat>
-            <PaymentsTable :payments="$store.state.currentTenancy.payments" />
+          <PaymentsTable :payments="$store.state.currentTenancy.payments" />
         </q-card>
       </q-card-section>
       <q-card-actions class="justify-center">
         <q-btn size="lg" color="primary" label="Back" icon="fas fa-arrow-left" @click="$router.push({name: 'Dashboard'})"/>
-        <q-btn size="lg" color="positive" label="Create Billing" icon="far fa-clipboard"/>
+        <q-btn size="lg" color="positive" label="Create Billing" icon="far fa-clipboard" @click="isOpen = !isOpen"/>
       </q-card-actions>
     </q-card>
     <q-separator/>
+    <BillingDialog 
+      :isOpen="isBillingOpen" 
+      v-on:close="isOpen = false"
+    />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 import PaymentsTable from '@/components/PaymentsTable'
+import BillingDialog from '@/components/BillingDialog'
 // import LoadingSpinner from '@/components/LoadingSpinner'
 export default {
     name: "Tenancy",
+    created() {
+      var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: this.meter,
+        options: options
+      });
+    },
     components: {
       //LoadingSpinner
-      PaymentsTable
+      PaymentsTable,
+      BillingDialog
     },
     data() {
       return {
+        isOpen: false,
+        meter: {
+          datasets: [{
+              barPercentage: 0.5,
+              barThickness: 6,
+              maxBarThickness: 8,
+              minBarLength: 2,
+              data: [10, 20, 30, 40, 50, 60, 70]
+          }]
+        },
         columns: [
           {
             name: 'details',
@@ -80,6 +108,11 @@ export default {
             value: moment(this.$store.state.currentTenancy.booking_date).format('LLL')
           }
         ]
+      }
+    },
+    computed: {
+      isBillingOpen() {
+        return this.isOpen;
       }
     },
     methods: {
